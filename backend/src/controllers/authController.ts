@@ -40,7 +40,8 @@ export async function signupHandler(
     const result = await signup(req.body);
     res.status(201).json({
       success: true,
-      data: result.user,
+      data: { user: result.user },
+      message: 'User registered successfully',
     });
   } catch (error) {
     next(error);
@@ -60,6 +61,7 @@ export async function loginHandler(
         user: result.user,
         tokens: result.tokens,
       },
+      message: 'Login successful',
     });
   } catch (error) {
     next(error);
@@ -74,7 +76,11 @@ export async function logoutHandler(
   try {
     const userId = req.user!.id;
     await logout(userId);
-    res.status(204).send();
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Logged out successfully',
+    });
   } catch (error) {
     next(error);
   }

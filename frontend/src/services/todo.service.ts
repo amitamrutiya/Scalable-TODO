@@ -1,4 +1,5 @@
 import { api } from './api';
+import { toast } from '@/contexts/ToastContext';
 import type {
   Todo,
   PaginatedResponse,
@@ -32,15 +33,18 @@ export const todoService = {
 
   async createTodo(data: CreateTodoData): Promise<Todo> {
     const response = await api.post<Todo>('/todos', data);
+    toast.success('Todo created');
     return response.data;
   },
 
   async updateTodo(id: string, data: UpdateTodoData): Promise<Todo> {
     const response = await api.patch<Todo>(`/todos/${id}`, data);
+    toast.success('Todo updated');
     return response.data;
   },
 
   async deleteTodo(id: string): Promise<void> {
     await api.delete(`/todos/${id}`);
+    toast.success('Todo deleted');
   },
 };

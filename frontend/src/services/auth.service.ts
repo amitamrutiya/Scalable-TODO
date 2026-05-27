@@ -1,4 +1,5 @@
 import { api } from './api';
+import { toast } from '@/contexts/ToastContext';
 import type {
   LoginCredentials,
   SignupData,
@@ -11,16 +12,19 @@ import type {
 export const authService = {
   async signup(data: SignupData): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/signup', data);
+    toast.success('Account created successfully!');
     return response.data;
   },
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await api.post<AuthResponse>('/auth/login', credentials);
+    toast.success('Welcome back!');
     return response.data;
   },
 
   async logout(): Promise<void> {
     await api.post('/auth/logout');
+    toast.success('Logged out successfully');
   },
 
   async getMe(): Promise<UserWithStats> {

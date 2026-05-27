@@ -5,6 +5,7 @@ import { env } from './config/env';
 import { pool, testConnection } from './config/database';
 import { apiRateLimiter } from './middleware/rateLimiter';
 import { errorHandler } from './middleware/errorHandler';
+import { NotFoundError } from './utils/errors';
 import authRoutes from './routes/authRoutes';
 import todoRoutes from './routes/todoRoutes';
 import userRoutes from './routes/userRoutes';
@@ -38,9 +39,12 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Health check endpoint (before auth)
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    environment: env.NODE_ENV,
+    success: true,
+    data: {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      environment: env.NODE_ENV,
+    },
   });
 });
 
@@ -51,9 +55,7 @@ app.use('/api/v1/users', userRoutes);
 
 // 404 handler
 app.use((_req: Request, _res: Response, next: NextFunction) => {
-  const error = new Error('Route not found');
-  (error as any).statusCode = 404;
-  next(error);
+  next(new NotFoundError('Route'));
 });
 
 // Global error handler

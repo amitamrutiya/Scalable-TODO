@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { storage } from '@/utils/storage';
+import { toast } from '@/contexts/ToastContext';
 
 const API_BASE_URL = 'http://localhost:3000/api/v1';
 
@@ -22,14 +23,43 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token expiration
+// Response interceptor to handle token expiration and errors
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      storage.removeToken();
-      window.location.href = '/login';
+    if (error.response) {
+      const status = error.response.status;
+      const data = error.response.data as Record<string, unknown> | undefined;
+      const message = typeof data?.message === 'string' ? data.message : '';
+
+      switch (status) {
+        case 400:
+          toast.error(`Validation failed: ${message || 'Bad request'}`);
+          break;
+        case 401:
+          toast.error('Session expired. Please login again.');
+          storage.removeToken();
+          window.location.href = '/login';
+          break;
+        case 403:
+          toast.error('Access denied.');
+          break;
+        case 404:
+          toast.error('Resource not found.');
+          break;
+        case 409:
+          toast.error('Resource already exists.');
+          break;
+        case 500:
+          toast.error('Server error. Please try again.');
+          break;
+        default:
+          toast.error(message || 'An error occurred. Please try again.');
+      }
+    } else {
+      toast.error('Network error. Check your connection.');
     }
+
     return Promise.reject(error);
   }
 );

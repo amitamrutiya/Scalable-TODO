@@ -74,6 +74,7 @@ export async function updateMeHandler(
     res.status(200).json({
       success: true,
       data: result,
+      message: 'Profile updated successfully',
     });
   } catch (error) {
     next(error);

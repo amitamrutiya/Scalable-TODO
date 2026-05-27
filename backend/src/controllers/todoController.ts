@@ -122,8 +122,10 @@ export async function getTodosHandler(
 
     res.status(200).json({
       success: true,
-      data: result.data,
-      pagination: result.pagination,
+      data: {
+        todos: result.data,
+        pagination: result.pagination,
+      },
     });
   } catch (error) {
     next(error);
@@ -196,7 +198,11 @@ export async function deleteTodoHandler(
     const { id } = req.params as { id: string };
     await deleteTodo(id, userId);
 
-    res.status(204).send();
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Todo deleted successfully',
+    });
   } catch (error) {
     next(error);
   }

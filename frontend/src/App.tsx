@@ -1,3 +1,4 @@
+import { ToastProvider } from '@/contexts/ToastContext';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Layout } from '@/components/layout/Layout';
@@ -30,56 +31,58 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppInitializer>
-          <Routes>
-            <Route element={<Layout />}>
-              {/* Public routes */}
-              <Route path="/" element={<LandingPage />} />
-              <Route
-                path="/login"
-                element={
-                  <PublicRoute>
-                    <LoginPage />
-                  </PublicRoute>
-                }
-              />
-              <Route
-                path="/signup"
-                element={
-                  <PublicRoute>
-                    <SignupPage />
-                  </PublicRoute>
-                }
-              />
+        <ToastProvider>
+          <AppInitializer>
+            <Routes>
+              <Route element={<Layout />}>
+                {/* Public routes */}
+                <Route path="/" element={<LandingPage />} />
+                <Route
+                  path="/login"
+                  element={
+                    <PublicRoute>
+                      <LoginPage />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/signup"
+                  element={
+                    <PublicRoute>
+                      <SignupPage />
+                    </PublicRoute>
+                  }
+                />
 
-              {/* Protected routes */}
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/todos"
-                element={
-                  <ProtectedRoute>
-                    <TodosPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Routes>
-        </AppInitializer>
+                {/* Protected routes */}
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/todos"
+                  element={
+                    <ProtectedRoute>
+                      <TodosPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+            </Routes>
+          </AppInitializer>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );
