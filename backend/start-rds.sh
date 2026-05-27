@@ -59,14 +59,14 @@ if [ ! -d "dist" ] || [ "$(find src -newer dist -print -quit 2>/dev/null)" ]; th
     echo "✅ Build complete"
 fi
 
-# Initialize schema
+# Initialize schema (silently, continue on error)
 echo "📊 Ensuring database schema..."
 node -e "
 const { initializeDatabase } = require('./dist/scripts/init-rds');
-initializeDatabase().catch(err => {
-  console.log('Schema init:', err.message);
-});
-" 2>&1 | grep -v "^$" | tail -3
+initializeDatabase()
+  .then(() => console.log('✅ Schema ready'))
+  .catch((err) => console.log('ℹ️ Schema check:', err.message));
+" 2>&1 | grep -E "Schema|Initialized|Connected" | tail -5 || true
 
 echo ""
 echo "🌐 Server Starting..."
