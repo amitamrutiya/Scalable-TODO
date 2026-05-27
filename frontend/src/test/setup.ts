@@ -3,6 +3,14 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { server } from '@/mocks/server';
 
+// Suppress React Router Future Flag warnings in tests
+const originalWarn = console.warn;
+console.warn = (...args: unknown[]) => {
+  const message = args[0]?.toString() || '';
+  if (message.includes('React Router Future Flag Warning')) return;
+  originalWarn.apply(console, args);
+};
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

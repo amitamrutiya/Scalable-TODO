@@ -25,9 +25,11 @@ export default defineConfig({
     environmentOptions: {
       jsdom: {
         url: 'http://localhost:5173',
+        storageQuota: 10000000,
       },
     },
     setupFiles: ['./src/test/setup.ts'],
     css: false,
+    isolate: true,
   },
 })
