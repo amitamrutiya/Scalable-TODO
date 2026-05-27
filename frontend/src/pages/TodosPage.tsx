@@ -79,6 +79,7 @@ export function TodosPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleCreateTodo = useCallback(async (data: CreateTodoData) => {
     setIsCreating(true);
@@ -97,14 +98,17 @@ export function TodosPage() {
   const handleEditClose = useCallback(() => {
     setIsEditing(false);
     setEditingTodo(null);
+    setIsUpdating(false);
   }, []);
 
   const handleEditSubmit = useCallback(async (id: string, data: UpdateTodoData) => {
-    setIsEditing(true);
+    setIsUpdating(true);
     try {
       await updateTodo(id, data);
-    } finally {
       setIsEditing(false);
+      setEditingTodo(null);
+    } finally {
+      setIsUpdating(false);
     }
   }, [updateTodo]);
 
@@ -211,7 +215,7 @@ export function TodosPage() {
         isOpen={isEditing}
         onClose={handleEditClose}
         onSubmit={handleEditSubmit}
-        isLoading={isEditing}
+        isLoading={isUpdating}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================
-# Start Todo Frontend
+# Start Todo Frontend with SPA Support
 # ============================================
 
 cd "$(dirname "$0")"
@@ -21,14 +21,14 @@ if [ ! -f "dist/index.html" ]; then
     npm run build
 fi
 
-# Start http-server
-echo "🌐 Serving frontend on http://localhost:5173"
+echo "🌐 Starting SPA server on http://localhost:5173"
 echo ""
 echo "   URL: http://localhost:5173"
 echo "   API: http://localhost:3000/api/v1"
 echo ""
+echo "✅ Supports React Router (no 404 on refresh)"
 echo "Press Ctrl+C to stop"
 echo ""
 
-# Use npx to run http-server without global install
-exec npx http-server dist -p 5173 --cors
+# Start Node.js server with SPA fallback support
+exec node server.js
