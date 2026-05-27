@@ -27,7 +27,7 @@ function sanitizeUser(user: User): SanitizedUser {
   };
 }
 
-export async function signup(data: SignupData): Promise<{ user: SanitizedUser }> {
+export async function signup(data: SignupData): Promise<{ user: SanitizedUser; tokens: AuthTokens }> {
   const { email, password, display_name } = data;
 
   try {
@@ -52,9 +52,20 @@ export async function signup(data: SignupData): Promise<{ user: SanitizedUser }>
     if (!user) {
       throw new Error('Failed to create user');
     }
+
+    // Generate JWT token for immediate login
+    const accessToken = generateToken(user.id);
+
     logger.info('User registered', { userId: user.id, email: user.email });
 
-    return { user: sanitizeUser(user) };
+    return {
+      user: sanitizeUser(user),
+      tokens: {
+        access_token: accessToken,
+        token_type: 'Bearer',
+        expires_in: 900,
+      },
+    };
   } catch (error) {
     if (error instanceof ConflictError) throw error;
     logger.error('Signup failed', { error: (error as Error).message });

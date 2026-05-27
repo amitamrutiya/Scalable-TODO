@@ -3,23 +3,29 @@ import { toast } from '@/contexts/ToastContext';
 import type {
   LoginCredentials,
   SignupData,
-  AuthResponse,
+  User,
   UpdateProfileData,
   UpdatePasswordData,
   UserWithStats,
 } from '@/types';
 
 export const authService = {
-  async signup(data: SignupData): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/signup', data);
+  async signup(data: SignupData): Promise<{ access_token: string; user: User }> {
+    const response = await api.post('/auth/signup', data);
+    const responseData = response.data as any;
+    const access_token = responseData.data?.tokens?.access_token;
+    const user = responseData.data?.user;
     toast.success('Account created successfully!');
-    return response.data;
+    return { access_token, user };
   },
 
-  async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await api.post<AuthResponse>('/auth/login', credentials);
+  async login(credentials: LoginCredentials): Promise<{ access_token: string; user: User }> {
+    const response = await api.post('/auth/login', credentials);
+    const responseData = response.data as any;
+    const access_token = responseData.data?.tokens?.access_token;
+    const user = responseData.data?.user;
     toast.success('Welcome back!');
-    return response.data;
+    return { access_token, user };
   },
 
   async logout(): Promise<void> {
@@ -28,13 +34,15 @@ export const authService = {
   },
 
   async getMe(): Promise<UserWithStats> {
-    const response = await api.get<UserWithStats>('/users/me');
-    return response.data;
+    const response = await api.get('/users/me');
+    const responseData = response.data as any;
+    return responseData.data || responseData;
   },
 
   async updateProfile(data: UpdateProfileData): Promise<UserWithStats> {
-    const response = await api.patch<UserWithStats>('/users/me', data);
-    return response.data;
+    const response = await api.patch('/users/me', data);
+    const responseData = response.data as any;
+    return responseData.data || responseData;
   },
 
   async updatePassword(data: UpdatePasswordData): Promise<void> {

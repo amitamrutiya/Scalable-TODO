@@ -40,7 +40,10 @@ export async function signupHandler(
     const result = await signup(req.body);
     res.status(201).json({
       success: true,
-      data: { user: result.user },
+      data: {
+        user: result.user,
+        tokens: result.tokens,
+      },
       message: 'User registered successfully',
     });
   } catch (error) {

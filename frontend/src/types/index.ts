@@ -49,6 +49,20 @@ export interface SignupData {
 }
 
 export interface AuthResponse {
+  success: boolean;
+  data: {
+    user: User;
+    tokens: {
+      access_token: string;
+      token_type: string;
+      expires_in: number;
+    };
+  };
+  message: string;
+}
+
+// Legacy type for backwards compatibility (tokens extracted from nested response)
+export interface AuthTokens {
   access_token: string;
   token_type: string;
   expires_in: number;

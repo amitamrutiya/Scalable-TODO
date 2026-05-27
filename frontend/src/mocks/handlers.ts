@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import type { Todo, UserWithStats, AuthResponse, PaginatedResponse, CreateTodoData, UpdateTodoData } from '@/types';
+import type { Todo, UserWithStats, PaginatedResponse, CreateTodoData, UpdateTodoData } from '@/types';
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -24,10 +24,22 @@ export const handlers = [
         { status: 400 }
       );
     }
-    const response: AuthResponse = {
-      access_token: 'mock-signup-token',
-      token_type: 'Bearer',
-      expires_in: 3600,
+    const response = {
+      success: true,
+      data: {
+        user: {
+          id: 'mock-user-id',
+          email: body.email,
+          display_name: body.display_name || 'Mock User',
+          created_at: new Date().toISOString(),
+        },
+        tokens: {
+          access_token: 'mock-signup-token',
+          token_type: 'Bearer',
+          expires_in: 3600,
+        },
+      },
+      message: 'User registered successfully',
     };
     return HttpResponse.json(response, { status: 201 });
   }),
@@ -41,10 +53,22 @@ export const handlers = [
         { status: 401 }
       );
     }
-    const response: AuthResponse = {
-      access_token: 'mock-login-token',
-      token_type: 'Bearer',
-      expires_in: 3600,
+    const response = {
+      success: true,
+      data: {
+        user: {
+          id: 'mock-user-id',
+          email: body.email,
+          display_name: 'Mock User',
+          created_at: new Date().toISOString(),
+        },
+        tokens: {
+          access_token: 'mock-login-token',
+          token_type: 'Bearer',
+          expires_in: 3600,
+        },
+      },
+      message: 'Login successful',
     };
     return HttpResponse.json(response);
   }),

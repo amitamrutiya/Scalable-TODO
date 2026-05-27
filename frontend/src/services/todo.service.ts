@@ -27,20 +27,25 @@ export const todoService = {
     if (params.order) queryParams.append('order', params.order);
 
     const query = queryParams.toString();
-    const response = await api.get<PaginatedResponse<Todo>>(`/todos${query ? `?${query}` : ''}`);
-    return response.data;
+    const response = await api.get(`/todos${query ? `?${query}` : ''}`);
+    const responseData = response.data as any;
+    return responseData.data || responseData;
   },
 
   async createTodo(data: CreateTodoData): Promise<Todo> {
-    const response = await api.post<Todo>('/todos', data);
+    const response = await api.post('/todos', data);
+    const responseData = response.data as any;
+    const todo = responseData.data || responseData;
     toast.success('Todo created');
-    return response.data;
+    return todo;
   },
 
   async updateTodo(id: string, data: UpdateTodoData): Promise<Todo> {
-    const response = await api.patch<Todo>(`/todos/${id}`, data);
+    const response = await api.patch(`/todos/${id}`, data);
+    const responseData = response.data as any;
+    const todo = responseData.data || responseData;
     toast.success('Todo updated');
-    return response.data;
+    return todo;
   },
 
   async deleteTodo(id: string): Promise<void> {
