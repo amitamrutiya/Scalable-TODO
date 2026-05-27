@@ -23,7 +23,7 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token expiration and errors
+// Response interceptor to handle errors and show specific validation messages
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
@@ -33,9 +33,20 @@ api.interceptors.response.use(
       const message = typeof data?.message === 'string' ? data.message : '';
 
       switch (status) {
-        case 400:
-          toast.error(`Validation failed: ${message || 'Bad request'}`);
+        case 400: {
+          // Show specific validation errors from details array
+          const details = Array.isArray(data?.details) ? data.details : [];
+          if (details.length > 0) {
+            // Show each validation error as a separate toast
+            details.forEach((detail: any) => {
+              const detailMessage = detail.message || String(detail);
+              toast.error(detailMessage);
+            });
+          } else {
+            toast.error(message || 'Validation failed');
+          }
           break;
+        }
         case 401:
           toast.error('Session expired. Please login again.');
           storage.removeToken();
