@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # Local PostgreSQL for development
   postgres:
     image: postgres:16-alpine
     container_name: todo-postgres
@@ -22,17 +23,18 @@ services:
     networks:
       - todo-network
 
-  backend:
+  # Backend with local PostgreSQL (default)
+  backend-local:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: todo-backend
+    container_name: todo-backend-local
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 3000
       DATABASE_URL: postgresql://todoapp:todoapp_secret_123@postgres:5432/todoapp
-      JWT_SECRET: your-super-secret-jwt-key-min-32-chars-long-for-security-in-prod-change-this
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-min-32-chars-long-for-security-in-prod-change-this}
       JWT_EXPIRES_IN: 15m
       BCRYPT_ROUNDS: 12
       RATE_LIMIT_WINDOW_MS: 900000
@@ -45,13 +47,38 @@ services:
         condition: service_healthy
     networks:
       - todo-network
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => r.statusCode === 200 ? process.exit(0) : process.exit(1))"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
+    profiles:
+      - local
 
+  # Backend with RDS (production-like)
+  backend-rds:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo-backend-rds
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      RDS_HOSTNAME: ${RDS_HOSTNAME}
+      RDS_PORT: ${RDS_PORT:-5432}
+      RDS_DB_NAME: ${RDS_DB_NAME:-todoapp}
+      RDS_USERNAME: ${RDS_USERNAME:-postgres}
+      RDS_AUTH_TOKEN: ${RDS_AUTH_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: 15m
+      BCRYPT_ROUNDS: 12
+      RATE_LIMIT_WINDOW_MS: 900000
+      RATE_LIMIT_MAX_REQUESTS: 100
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:80
+    ports:
+      - "3000:3000"
+    networks:
+      - todo-network
+    profiles:
+      - rds
+
+  # Frontend
   frontend:
     build:
       context: ./frontend
@@ -61,25 +88,25 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - backend-local
     networks:
       - todo-network
+    profiles:
+      - local
 
-  # Uncomment for local development (hot reload)
-  # frontend-dev:
-  #   image: node:18-alpine
-  #   container_name: todo-frontend-dev
-  #   working_dir: /app
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - "5173:5173"
-  #   command: sh -c "npm install && npm run dev -- --host"
-  #   environment:
-  #     - NODE_ENV=development
-  #   networks:
-  #     - todo-network
+  # Frontend for RDS mode
+  frontend-rds:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo-frontend-rds
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - todo-network
+    profiles:
+      - rds
 
 volumes:
   postgres_data:

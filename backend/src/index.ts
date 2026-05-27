@@ -15,11 +15,17 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+
+// CORS configuration - allow frontend origin
+const corsOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : ['http://localhost:5173', 'http://localhost:80', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: env.NODE_ENV === 'production' 
-    ? (process.env.ALLOWED_ORIGINS?.split(',') || []) 
-    : '*',
+  origin: corsOrigins,
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Rate limiting
