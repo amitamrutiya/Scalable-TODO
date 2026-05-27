@@ -1,9 +1,12 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { authService } from '@/services/auth.service';
+import { storage } from '@/utils/storage';
 import type { UserWithStats } from '@/types';
 
 interface AuthContextType {
   user: UserWithStats | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   setUser: (user: UserWithStats | null) => void;
   logout: () => void;
 }
@@ -12,6 +15,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUserState] = useState<UserWithStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function init() {
+      const token = storage.getToken();
+      if (token) {
+        try {
+          const userData = await authService.getMe();
+          if (!cancelled) {
+            setUserState(userData);
+          }
+        } catch {
+          if (!cancelled) {
+            storage.removeToken();
+          }
+        }
+      }
+      if (!cancelled) {
+        setIsLoading(false);
+      }
+    }
+
+    init();
+    return () => { cancelled = true; };
+  }, []);
 
   const setUser = useCallback((newUser: UserWithStats | null) => {
     setUserState(newUser);
@@ -26,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         setUser,
         logout,
       }}

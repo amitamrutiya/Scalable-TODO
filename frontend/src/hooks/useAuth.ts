@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { authService } from '@/services/auth.service';
 import { useAuth as useAuthContext } from '@/contexts/AuthContext';
 import { storage } from '@/utils/storage';
@@ -80,32 +80,6 @@ export function useAuthActions(): UseAuthReturn {
 }
 
 export function useInitializeAuth() {
-  const { setUser } = useAuthContext();
-  const [isInitializing, setIsInitializing] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function init() {
-      const token = storage.getToken();
-      if (token) {
-        try {
-          const user = await authService.getMe();
-          if (!cancelled) {
-            setUser(user);
-          }
-        } catch {
-          storage.removeToken();
-        }
-      }
-      if (!cancelled) {
-        setIsInitializing(false);
-      }
-    }
-
-    init();
-    return () => { cancelled = true; };
-  }, [setUser]);
-
-  return isInitializing;
+  const { isLoading } = useAuthContext();
+  return isLoading;
 }

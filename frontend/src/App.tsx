@@ -1,6 +1,6 @@
 import { ToastProvider } from '@/contexts/ToastContext';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { PublicRoute } from '@/components/layout/PublicRoute';
@@ -10,13 +10,12 @@ import { SignupPage } from '@/pages/SignupPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { TodosPage } from '@/pages/TodosPage';
 import { ProfilePage } from '@/pages/ProfilePage';
-import { useInitializeAuth } from '@/hooks/useAuth';
 import { Spinner } from '@/components/ui/Spinner';
 
 function AppInitializer({ children }: { children: React.ReactNode }) {
-  const isInitializing = useInitializeAuth();
+  const { isLoading } = useAuth();
 
-  if (isInitializing) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <Spinner size="lg" />
