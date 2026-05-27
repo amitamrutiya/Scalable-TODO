@@ -19,7 +19,7 @@ export const apiRateLimiter = rateLimit({
       message: 'Too many requests, please try again later',
     });
   },
-  keyGenerator: (req) => {
+  keyGenerator: (req: any) => {
     // Use user ID if authenticated, otherwise IP
     return req.user?.id || req.ip || 'unknown';
   },
