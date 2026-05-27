@@ -42,7 +42,7 @@ describe('TodoItem', () => {
     const todo = createMockTodo({ id: 'todo-1' });
     render(<TodoItem todo={todo} onToggle={mockOnToggle} onDelete={mockOnDelete} />);
 
-    const deleteButton = screen.getAllByRole('button')[1];
+    const deleteButton = screen.getByRole('button', { name: /delete task/i });
     await userEvent.click(deleteButton);
 
     expect(window.confirm).toHaveBeenCalled();
@@ -55,7 +55,7 @@ describe('TodoItem', () => {
     const todo = createMockTodo({ id: 'todo-1' });
     render(<TodoItem todo={todo} onToggle={mockOnToggle} onDelete={mockOnDelete} />);
 
-    const deleteButton = screen.getAllByRole('button')[1];
+    const deleteButton = screen.getByRole('button', { name: /delete task/i });
     await userEvent.click(deleteButton);
 
     expect(mockOnDelete).not.toHaveBeenCalled();

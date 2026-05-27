@@ -9,9 +9,10 @@ interface TodoListProps {
   error: string | null;
   onToggle: (id: string, isCompleted: boolean) => Promise<unknown>;
   onDelete: (id: string) => Promise<void>;
+  onEdit: (todo: Todo) => void;
 }
 
-export function TodoList({ todos, isLoading, error, onToggle, onDelete }: TodoListProps) {
+export function TodoList({ todos, isLoading, error, onToggle, onDelete, onEdit }: TodoListProps) {
   if (isLoading && todos.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -22,8 +23,8 @@ export function TodoList({ todos, isLoading, error, onToggle, onDelete }: TodoLi
 
   if (error) {
     return (
-      <div className="rounded-lg bg-red-50 p-4 text-center text-red-600">
-        <p className="text-sm">{error}</p>
+      <div className="rounded-2xl bg-red-50/80 backdrop-blur-sm border border-red-200 p-6 text-center">
+        <p className="text-sm text-red-600 font-medium">{error}</p>
       </div>
     );
   }
@@ -39,13 +40,19 @@ export function TodoList({ todos, isLoading, error, onToggle, onDelete }: TodoLi
 
   return (
     <div className="space-y-3">
-      {todos.map((todo) => (
-        <TodoItem
+      {todos.map((todo, index) => (
+        <div
           key={todo.id}
-          todo={todo}
-          onToggle={onToggle}
-          onDelete={onDelete}
-        />
+          className="animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both"
+          style={{ animationDelay: `${index * 60}ms` }}
+        >
+          <TodoItem
+            todo={todo}
+            onToggle={onToggle}
+            onDelete={onDelete}
+            onEdit={onEdit}
+          />
+        </div>
       ))}
     </div>
   );

@@ -10,12 +10,15 @@ export function EmptyState({
   description = 'Get started by creating a new item.',
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-center">
-      <div className="rounded-full bg-gray-100 p-4">
-        <ClipboardList className="h-8 w-8 text-gray-400" />
+    <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in zoom-in-95 duration-500">
+      <div className="relative">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-200/40 to-purple-200/40 blur-xl" />
+        <div className="relative rounded-full bg-gradient-to-br from-white/80 to-slate-50/80 border border-white/60 p-6 shadow-lg backdrop-blur-sm">
+          <ClipboardList className="h-10 w-10 text-gray-400" />
+        </div>
       </div>
-      <h3 className="mt-4 text-sm font-semibold text-gray-900">{title}</h3>
-      <p className="mt-1 text-sm text-gray-500">{description}</p>
+      <h3 className="mt-6 text-base font-semibold text-gray-900">{title}</h3>
+      <p className="mt-2 text-sm text-gray-500 max-w-xs leading-relaxed">{description}</p>
     </div>
   );
 }

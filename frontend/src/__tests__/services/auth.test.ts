@@ -19,7 +19,7 @@ describe('authService', () => {
       const result = await authService.signup(data);
 
       expect(result).toHaveProperty('access_token');
-      expect(result).toHaveProperty('token_type');
+      expect(result).toHaveProperty('user');
       expect(result.access_token).toBe('mock-signup-token');
     });
 

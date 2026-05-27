@@ -51,7 +51,7 @@ export function TodoFilters({ filters, onFiltersChange, totalCount }: TodoFilter
           onChange={(e) => updateFilter('status', e.target.value || undefined)}
           options={[
             { value: '', label: 'All Status' },
-            { value: 'pending', label: 'Pending' },
+            { value: 'active', label: 'Active' },
             { value: 'completed', label: 'Completed' },
           ]}
         />

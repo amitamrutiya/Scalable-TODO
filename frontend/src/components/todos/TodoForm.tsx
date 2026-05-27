@@ -31,7 +31,7 @@ export function TodoForm({ onSubmit, isLoading }: TodoFormProps) {
       title,
       description: description || undefined,
       priority,
-      due_date: dueDate || undefined,
+      due_date: dueDate ? new Date(dueDate).toISOString() : undefined,
       tags: tags.length > 0 ? tags : undefined,
     });
 

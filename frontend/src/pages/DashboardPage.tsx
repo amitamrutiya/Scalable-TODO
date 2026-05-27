@@ -27,7 +27,7 @@ export function DashboardPage() {
     isLoading: todosLoading,
     error,
     fetchTodos,
-  } = useTodos({ status: 'pending', sort: 'due_date', order: 'asc' });
+  } = useTodos({ status: 'active', sort: 'due_date', order: 'asc' });
 
   useEffect(() => {
     fetchTodos();
@@ -111,7 +111,7 @@ export function DashboardPage() {
             ) : upcomingTodos.length === 0 ? (
               <EmptyState
                 title="All caught up!"
-                description="You have no pending tasks."
+                description="You have no active tasks."
               />
             ) : (
               <div className="space-y-3">

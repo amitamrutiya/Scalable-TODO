@@ -78,7 +78,7 @@ export interface UpdatePasswordData {
 }
 
 export interface TodoFilters {
-  status?: 'completed' | 'pending';
+  status?: 'completed' | 'active';
   priority?: 'low' | 'medium' | 'high';
   tag?: string;
   search?: string;
@@ -92,6 +92,14 @@ export interface CreateTodoData {
   priority?: 'low' | 'medium' | 'high';
   due_date?: string;
   tags?: string[];
+}
+
+export interface EditTodoData {
+  title: string;
+  description?: string;
+  priority: 'low' | 'medium' | 'high';
+  due_date?: string;
+  tags: string[];
 }
 
 export interface UpdateTodoData {

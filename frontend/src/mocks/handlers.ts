@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import type { Todo, UserWithStats, PaginatedResponse, CreateTodoData, UpdateTodoData } from '@/types';
+import type { Todo, UserWithStats, CreateTodoData, UpdateTodoData } from '@/types';
 
 const API_BASE = 'http://localhost:3000/api/v1';
 
@@ -134,7 +134,7 @@ export const handlers = [
 
     if (status === 'completed') {
       filtered = filtered.filter((t) => t.is_completed);
-    } else if (status === 'pending') {
+    } else if (status === 'active' || status === 'pending') {
       filtered = filtered.filter((t) => !t.is_completed);
     }
 
@@ -157,13 +157,16 @@ export const handlers = [
     const start = (page - 1) * limit;
     const paginated = filtered.slice(start, start + limit);
 
-    const response: PaginatedResponse<Todo> = {
-      data: paginated,
-      pagination: {
-        page,
-        limit,
-        total,
-        total_pages: totalPages,
+    const response = {
+      success: true,
+      data: {
+        todos: paginated,
+        pagination: {
+          page,
+          limit,
+          total,
+          total_pages: totalPages,
+        },
       },
     };
 
