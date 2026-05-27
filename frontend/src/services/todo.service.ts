@@ -29,7 +29,19 @@ export const todoService = {
     const query = queryParams.toString();
     const response = await api.get(`/todos${query ? `?${query}` : ''}`);
     const responseData = response.data as any;
-    return responseData.data || responseData;
+    
+    // Handle nested response: {success, data: {todos, pagination}}
+    const innerData = responseData.data || responseData;
+    
+    // Backend returns {todos: Todo[], pagination: Pagination}
+    // But frontend expects {data: Todo[], pagination: Pagination}
+    const todos = Array.isArray(innerData.todos) ? innerData.todos : [];
+    const pagination = innerData.pagination || { page: 1, limit: 20, total: 0, total_pages: 0 };
+    
+    return {
+      data: todos,
+      pagination,
+    };
   },
 
   async createTodo(data: CreateTodoData): Promise<Todo> {
