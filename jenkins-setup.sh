@@ -19,10 +19,10 @@ echo "===> Step 3: Start Jenkins container"
 docker run -d \
   --name jenkins \
   --restart unless-stopped \
-  -p 8080:8080 \
-  -p 50000:50000 \
+  --network host \
   -v jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /home/ubuntu/.aws:/root/.aws:ro \
   -u root \
   jenkins-custom:latest
 

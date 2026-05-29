@@ -63,7 +63,7 @@ pipeline {
                 '''
 
                 dir('backend') {
-                    sh 'npm ci'
+                    sh 'npm install'
                     // Override DATABASE_URL so tests hit the local container
                     withEnv([
                         'DATABASE_URL=postgresql://postgres:testpassword@localhost:5433/todoapp_test',
@@ -87,7 +87,7 @@ pipeline {
         stage('CI: Frontend Tests') {
             steps {
                 dir('frontend') {
-                    sh 'npm ci'
+                    sh 'npm install'
                     // --run = single pass (no watch mode) for CI
                     sh 'npx vitest run --reporter=verbose 2>&1 || true'
                 }
