@@ -22,7 +22,6 @@ docker run -d \
   --network host \
   -v jenkins_home:/var/jenkins_home \
   -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /home/ubuntu/.aws:/root/.aws:ro \
   -u root \
   jenkins-custom:latest
 
