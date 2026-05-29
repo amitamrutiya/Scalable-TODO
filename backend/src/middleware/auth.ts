@@ -38,7 +38,7 @@ export async function authenticateToken(
       throw new AuthenticationError('User no longer exists');
     }
 
-    (req as any).user = result.rows[0];
+    req.user = result.rows[0];
     next();
   } catch (error) {
     if (error instanceof AuthenticationError) {

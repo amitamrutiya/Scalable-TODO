@@ -1,0 +1,41 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: todo-eks-cluster
+  region: us-east-1
+  version: "1.31"
+
+vpc:
+  id: "vpc-0537ee2d19cc01c24"
+  subnets:
+    public:
+      us-east-1a:
+        id: "subnet-081d78dce46abe9c8"
+      us-east-1b:
+        id: "subnet-099d3a04f08d64e0a"
+    private:
+      us-east-1a:
+        id: "subnet-066ad5e731ae5c7e1"
+      us-east-1b:
+        id: "subnet-0655e4a2a7839a1cb"
+
+managedNodeGroups:
+  - name: todo-nodes
+    instanceType: t3.small
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 4
+    volumeSize: 20
+    privateNetworking: false
+    subnets:
+      - subnet-081d78dce46abe9c8
+      - subnet-099d3a04f08d64e0a
+    iam:
+      withAddonPolicies:
+        ebs: true
+        efs: false
+
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["api", "audit", "authenticator"]

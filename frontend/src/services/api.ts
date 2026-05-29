@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { storage } from '@/utils/storage';
 import { toast } from '@/contexts/ToastContext';
 
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+const API_BASE_URL = '/api/v1';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

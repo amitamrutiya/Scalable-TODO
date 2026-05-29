@@ -1,11 +1,12 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY tsconfig.node.json ./
 COPY vite.config.ts ./
 COPY postcss.config.js ./
 COPY tailwind.config.js ./
