@@ -31,7 +31,7 @@ export function LandingPage() {
               ) : (
                 <>
                   <Link to="/signup">
-                    <Button size="lg">Get Started</Button>
+                    <Button size="lg">Get Started Free</Button>
                   </Link>
                   <Link to="/login">
                     <Button variant="outline" size="lg">Sign In</Button>
