@@ -1,8 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import type { Todo, UserWithStats, CreateTodoData, UpdateTodoData } from '@/types';
 
-const API_BASE = 'http://localhost:3000/api/v1';
-
 // Store mutable state for todos across handlers
 let mockTodos: Todo[] = [];
 
@@ -16,7 +14,7 @@ export function getMockTodos() {
 
 export const handlers = [
   // Auth: Signup
-  http.post(`${API_BASE}/auth/signup`, async ({ request }) => {
+  http.post('/api/v1/auth/signup', async ({ request }) => {
     const body = await request.json() as Record<string, unknown>;
     if (!body.email || !body.password) {
       return HttpResponse.json(
@@ -45,7 +43,7 @@ export const handlers = [
   }),
 
   // Auth: Login
-  http.post(`${API_BASE}/auth/login`, async ({ request }) => {
+  http.post('/api/v1/auth/login', async ({ request }) => {
     const body = await request.json() as Record<string, unknown>;
     if (body.email === 'wrong@example.com' || body.password === 'wrongpassword') {
       return HttpResponse.json(
@@ -74,12 +72,12 @@ export const handlers = [
   }),
 
   // Auth: Logout
-  http.post(`${API_BASE}/auth/logout`, () => {
+  http.post('/api/v1/auth/logout', () => {
     return new HttpResponse(null, { status: 204 });
   }),
 
   // Users: Get Me
-  http.get(`${API_BASE}/users/me`, ({ request }) => {
+  http.get('/api/v1/users/me', ({ request }) => {
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -99,7 +97,7 @@ export const handlers = [
   }),
 
   // Users: Update Profile
-  http.patch(`${API_BASE}/users/me`, async ({ request }) => {
+  http.patch('/api/v1/users/me', async ({ request }) => {
     const body = await request.json() as Partial<UserWithStats>;
     const user: UserWithStats = {
       id: 'user-1',
@@ -116,12 +114,12 @@ export const handlers = [
   }),
 
   // Users: Update Password
-  http.patch(`${API_BASE}/users/me/password`, async () => {
+  http.patch('/api/v1/users/me/password', async () => {
     return new HttpResponse(null, { status: 204 });
   }),
 
   // Todos: Get All
-  http.get(`${API_BASE}/todos`, ({ request }) => {
+  http.get('/api/v1/todos', ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '1', 10);
     const limit = parseInt(url.searchParams.get('limit') || '20', 10);
@@ -174,7 +172,7 @@ export const handlers = [
   }),
 
   // Todos: Create
-  http.post(`${API_BASE}/todos`, async ({ request }) => {
+  http.post('/api/v1/todos', async ({ request }) => {
     const body = await request.json() as CreateTodoData;
     const newTodo: Todo = {
       id: `todo-${Date.now()}`,
@@ -192,7 +190,7 @@ export const handlers = [
   }),
 
   // Todos: Update
-  http.patch(`${API_BASE}/todos/:id`, async ({ request, params }) => {
+  http.patch('/api/v1/todos/:id', async ({ request, params }) => {
     const { id } = params;
     const body = await request.json() as UpdateTodoData;
     const index = mockTodos.findIndex((t) => t.id === id);
@@ -210,7 +208,7 @@ export const handlers = [
   }),
 
   // Todos: Delete
-  http.delete(`${API_BASE}/todos/:id`, ({ params }) => {
+  http.delete('/api/v1/todos/:id', ({ params }) => {
     const { id } = params;
     const index = mockTodos.findIndex((t) => t.id === id);
     if (index === -1) {
