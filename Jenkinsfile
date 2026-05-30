@@ -89,7 +89,7 @@ pipeline {
                 dir('frontend') {
                     sh 'npm install'
                     // --run = single pass (no watch mode) for CI
-                    sh 'npx vitest run --reporter=verbose 2>&1 || true'
+                    sh 'npx vitest run --reporter=verbose'
                 }
             }
         }
@@ -129,8 +129,21 @@ pipeline {
                     docker push ${FRONTEND_REPO}:${IMAGE_TAG}
                     docker push ${FRONTEND_REPO}:latest
                 """
-            }
-        }
+            }            post {
+                always {
+                    // Remove locally built images immediately after push.
+                    // Layers are cached by Docker daemon; only the tag references
+                    // and top-level manifest are removed here, keeping shared base
+                    // layers for future cache hits while freeing tag-level disk refs.
+                    sh """
+                        docker rmi ${BACKEND_REPO}:${IMAGE_TAG}  || true
+                        docker rmi ${BACKEND_REPO}:latest         || true
+                        docker rmi ${FRONTEND_REPO}:${IMAGE_TAG} || true
+                        docker rmi ${FRONTEND_REPO}:latest        || true
+                        docker image prune -f                     || true
+                    """
+                }
+            }        }
 
         // ─────────────────────────────────────────────────────────────
         // STAGE 6: Rolling deploy to EKS using the git-SHA-tagged image
@@ -201,7 +214,8 @@ pipeline {
             """
         }
         always {
-            // Clean up dangling docker images to save disk space
+            // Final sweep: remove any remaining dangling images or build cache
+            // that weren't caught by the per-stage cleanup above.
             sh 'docker image prune -f || true'
         }
     }
