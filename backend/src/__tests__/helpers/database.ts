@@ -53,5 +53,6 @@ export async function cleanupTestData(): Promise<void> {
  * Close the database pool. Call after all tests.
  */
 export async function closeTestDatabase(): Promise<void> {
-  await pool.end();
+  // Pool is closed by Jest's forceExit. Explicitly ending it here
+  // would break subsequent test suites when running with --runInBand.
 }

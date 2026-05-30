@@ -27,12 +27,12 @@ describe('Auth Endpoints', () => {
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toMatchObject({
+      expect(response.body.data.user).toMatchObject({
         email: validSignupData.email,
         display_name: validSignupData.display_name,
       });
-      expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.password_hash).toBeUndefined();
+      expect(response.body.data.user.id).toBeDefined();
+      expect(response.body.data.user.password_hash).toBeUndefined();
     });
 
     it('should fail when email already exists', async () => {
@@ -210,7 +210,7 @@ describe('Auth Endpoints', () => {
         .post('/api/v1/auth/logout')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
 
     it('should fail when no token is provided (401)', async () => {

@@ -27,6 +27,8 @@ module.exports = {
   verbose: true,
   clearMocks: true,
   restoreMocks: true,
+  forceExit: true,
+  maxWorkers: 1,
   setupFiles: ['<rootDir>/src/__tests__/setupEnv.js'],
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setupTests.ts'],
   testTimeout: 30000,

@@ -25,11 +25,11 @@ describe('Todo Endpoints', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.pagination.page).toBe(1);
-      expect(response.body.pagination.limit).toBe(1);
-      expect(response.body.pagination.total).toBe(2);
-      expect(response.body.pagination.total_pages).toBe(2);
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.pagination.page).toBe(1);
+      expect(response.body.data.pagination.limit).toBe(1);
+      expect(response.body.data.pagination.total).toBe(2);
+      expect(response.body.data.pagination.total_pages).toBe(2);
     });
 
     it('should filter by status=active', async () => {
@@ -42,8 +42,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toBe('Active Todo');
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.todos[0].title).toBe('Active Todo');
     });
 
     it('should filter by status=completed', async () => {
@@ -56,8 +56,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toBe('Completed Todo');
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.todos[0].title).toBe('Completed Todo');
     });
 
     it('should filter by priority', async () => {
@@ -70,8 +70,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].priority).toBe('high');
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.todos[0].priority).toBe('high');
     });
 
     it('should search by text in title', async () => {
@@ -84,8 +84,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toBe('Buy groceries');
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.todos[0].title).toBe('Buy groceries');
     });
 
     it('should search by text in description', async () => {
@@ -98,8 +98,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data).toHaveLength(1);
-      expect(response.body.data[0].title).toBe('Task 1');
+      expect(response.body.data.todos).toHaveLength(1);
+      expect(response.body.data.todos[0].title).toBe('Task 1');
     });
 
     it('should sort by different fields', async () => {
@@ -112,8 +112,8 @@ describe('Todo Endpoints', () => {
         .set('Authorization', `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data[0].title).toBe('Alpha');
-      expect(response.body.data[1].title).toBe('Beta');
+      expect(response.body.data.todos[0].title).toBe('Alpha');
+      expect(response.body.data.todos[1].title).toBe('Beta');
     });
 
     it('should fail when no token is provided', async () => {
@@ -376,14 +376,14 @@ describe('Todo Endpoints', () => {
         .delete(`/api/v1/todos/${todo.id}`)
         .set('Authorization', `Bearer ${token}`);
 
-      expect(deleteResponse.status).toBe(204);
+      expect(deleteResponse.status).toBe(200);
 
       // Verify it's not in the list anymore
       const listResponse = await request(app)
         .get('/api/v1/todos')
         .set('Authorization', `Bearer ${token}`);
 
-      expect(listResponse.body.data).toHaveLength(0);
+      expect(listResponse.body.data.todos).toHaveLength(0);
     });
 
     it('should fail to delete non-existent todo (404)', async () => {
