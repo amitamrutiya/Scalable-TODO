@@ -129,7 +129,8 @@ pipeline {
                     docker push ${FRONTEND_REPO}:${IMAGE_TAG}
                     docker push ${FRONTEND_REPO}:latest
                 """
-            }            post {
+            }
+            post {
                 always {
                     // Remove locally built images immediately after push.
                     // Layers are cached by Docker daemon; only the tag references
@@ -143,7 +144,8 @@ pipeline {
                         docker image prune -f                     || true
                     """
                 }
-            }        }
+            }
+        }
 
         // ─────────────────────────────────────────────────────────────
         // STAGE 6: Rolling deploy to EKS using the git-SHA-tagged image
